@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -33,6 +33,24 @@ async function run() {
 
     const coffeeCollection = client.db('coffeeDB').collection('coffees')
 
+
+    // to show all coffee data
+    app.get('/coffees', async(req, res) =>{
+      const result = await coffeeCollection.find().toArray();
+      res.send(result);
+    })
+
+
+    // specific coffee details
+    app.get('/coffees/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await coffeeCollection.findOne(query);
+      res.send(result);
+    })
+
+
+    // if we add a coffee
     app.post('/coffees', async(req, res) =>{
       const newCoffee = req.body;
       console.log(newCoffee);
@@ -40,6 +58,14 @@ async function run() {
       res.send(result);
     })
 
+
+    // if we want to delete coffee
+    app.delete('/coffees/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await coffeeCollection.deleteOne(query);
+      res.send(result);
+    })
 
 
 
