@@ -59,6 +59,21 @@ async function run() {
     })
 
 
+    // update any coffee
+    app.put('/coffees/:id', async(req, res) =>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const options = {upsert: true};
+      const updatedCoffee = req.body;
+      const updatedDoc = {
+        $set: updatedCoffee
+      }
+
+      const result = await coffeeCollection.updateOne(filter, updatedDoc, options);
+      res.send(result);
+    })
+
+
     // if we want to delete coffee
     app.delete('/coffees/:id', async(req, res) =>{
       const id = req.params.id;
